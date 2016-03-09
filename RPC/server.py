@@ -1,10 +1,22 @@
-#!/usr/bin/env python
-
+from xmlrpc.server import SimpleXMLRPCServer
+from xmlrpc.server import SimpleXMLRPCRequestHandler
 import sys
 
+# Restrict to a particular path.
+class RequestHandler(SimpleXMLRPCRequestHandler):
+    rpc_paths = ('/RPC2',)
+
+# Create server
+server = SimpleXMLRPCServer(("localhost", 8000),
+                            requestHandler=RequestHandler)
+server.register_introspection_functions()
+print("Listening on port 8000...")
+
+#inisialisasi pemisah kata dan karakter
 stopWord = ['for', 'from', 'to', 'with', 'after', 'at']
 forbiddenChar = [';', ':', ',', '(']
 
+#definisi fungsi
 def parseLine(lineText):
 	logDetails = lineText.split()[5:]
 	eventName = ''
@@ -52,4 +64,9 @@ def sortByValue(dict):
 	result = sorted(dict.items(), key = lambda t:t[1])
 	return result
 
-parseFile('messages.txt')
+server.register_function(parseLine, 'parseLine')
+server.register_function(parseFile, 'parseFile')
+server.register_function(sortByValue, 'sortByValue')
+
+# Run the server's main loop
+server.serve_forever()
