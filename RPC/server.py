@@ -12,7 +12,7 @@ import pickle
 #import sys
 
 # Create server
-server = SimpleXMLRPCServer(("localhost", 8000), logRequests=True, allow_none=True)
+server = SimpleXMLRPCServer(("", 8000), logRequests=True, allow_none=True)
 # server.register_introspection_functions()
 print("Listening on port 8000...")
 
