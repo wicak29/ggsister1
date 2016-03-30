@@ -48,6 +48,22 @@ def parseFile(logFile):
 
 	return eventLog
 
+
+def parseText(fileText):
+	eventLog = {}
+	log = fileText.split('\n')
+	for line in log:
+		eventName = parseLine(line);
+		if eventName in eventLog:
+			eventLog[eventName] = eventLog[eventName] + 1
+		else:
+			eventLog[eventName] = 1
+
+	eventLog = sortByValue(eventLog)
+
+	return eventLog
+
+
 def sortByValue(dict):
 	result = sorted(dict.items(), key = lambda t:t[1])
 	return result

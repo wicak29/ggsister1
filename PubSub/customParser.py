@@ -9,7 +9,7 @@ def parseLine(lineText):
 	logDetails = lineText.split()[5:]
 	eventName = ''
 	for word in logDetails:
-
+		
 		if (word in stopWord):
 			break;
 
@@ -31,10 +31,10 @@ def parseLine(lineText):
 
 	return eventName
 
-def parseObject(filePointer):
+def parseFile(logFile):
 	eventLog = {}
 
-	with filePointer as log:
+	with open(logFile) as log:
 		for line in log:
 			eventName = parseLine(line);
 			if eventName in eventLog:
@@ -43,8 +43,11 @@ def parseObject(filePointer):
 				eventLog[eventName] = 1
 
 	eventLog = sortByValue(eventLog)
+	for key, value in eventLog:
+		print (key, value)
 
 	return eventLog
+
 
 def parseText(fileText):
 	eventLog = {}
@@ -57,8 +60,8 @@ def parseText(fileText):
 			eventLog[eventName] = 1
 
 	eventLog = sortByValue(eventLog)
-
 	return eventLog
+
 
 def sortByValue(dict):
 	result = sorted(dict.items(), key = lambda t:t[1])
