@@ -14,7 +14,7 @@ connection = pika.BlockingConnection(parameters)
 
 channel = connection.channel()
 
-channel.queue_declare(queue='rpc_queue')
+channel.queue_declare(queue='fileOnManager')
 
 
 def on_request(ch, method, props, body):
@@ -36,7 +36,7 @@ def on_request(ch, method, props, body):
     print(" [x] Awaiting requests")
 
 channel.basic_qos(prefetch_count=1)
-channel.basic_consume(on_request, queue='rpc_queue')
+channel.basic_consume(on_request, queue='fileOnManager')
 
 print(" [x] Awaiting RPC requests")
 channel.start_consuming()
