@@ -2,37 +2,67 @@
 import pika
 import sys
 import os
+import json
 import timeit
 import glob
 
 os.chdir("log")
 
 eventLogs = []
+flag = 1
 events = {}
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(
-        host='localhost'))
+connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
 channel = connection.channel()
+channel.exchange_declare(exchange='logs',type='fanout')
 
-channel.exchange_declare(exchange='logs',
-                         type='fanout')
+#--------------------------------------------------------------------------
+# def on_response(self, ch, method, props, body):
+#         if self.corr_id == props.correlation_id:
+#             self.response = json.loads(body)
 
 # result = channel.queue_declare(exclusive=True)
-# callback_queue = result.method.queue
-# channel.basic_consume(on_response, no_ack=True, queue=callback_queue)
+# queue_name = result.method.queue
+# channel.basic_consume(on_response, no_ack=True, queue=callback_queue
+#---------------------------------------------------------------------------
 
 start = timeit.default_timer()
+
+count_mess = 0
 
 for fileName in glob.glob("*.*"):
     print(" [x] Memproses file . . .")
     message = fileName
-    eventLogs.append(fileName)
-    #message = ' '.join(sys.argv[1:]) or "info: Hello World!"
-    channel.basic_publish(exchange='logs',
-	                      routing_key='',
-	                      body=message)
-#print(" [x] Sent %r" % message)
+    print message
+    count_mess +=1
+    print count_mess
 
+    #message = ' '.join(sys.argv[1:]) or "info: Hello World!"
+    channel.basic_publish(exchange='logs', routing_key='', body=message)
+
+#----------------------------------------------------------------------------------
+channel2 = connection.channel()
+channel2.exchange_declare(exchange='result', type='direct')
+result = channel2.queue_declare(exclusive=True)
+queue_name = result.method.queue
+channel2.queue_bind(exchange='result', routing_key='c', queue=queue_name)
+
+def callback(ch, method, properties, body):
+	body = json.loads(body)
+	# print " [x] %r" % (body)
+	eventLogs.append(body)
+	global flag 
+	flag = flag + 1
+	print flag
+	if flag == count_mess -1:
+		channel2.stop_consuming()
+
+channel2.basic_consume(callback, queue=queue_name, no_ack=True)
+
+channel2.start_consuming()
+
+#print(" [x] Sent %r" % message)
+print eventLogs, "END EVENTLOGS"
 for event in eventLogs:
     for key, value in event:
         if key in events:
