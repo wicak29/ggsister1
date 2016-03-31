@@ -3,8 +3,14 @@
 from customParser import parseText
 import pika
 import json
-connection = pika.BlockingConnection(pika.ConnectionParameters(
-        host='localhost'))
+
+credentials = pika.PlainCredentials('ggsister', 'ggsister')
+parameters = pika.ConnectionParameters('10.151.36.37',
+                                       5672,
+                                       '/',
+                                       credentials)
+
+connection = pika.BlockingConnection(parameters)
 
 channel = connection.channel()
 

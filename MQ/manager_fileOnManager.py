@@ -11,9 +11,13 @@ eventLogs = []
 events = {}
 class MessageParserWorker(object):
     def __init__(self):
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(
-                host='localhost'))
+        credentials = pika.PlainCredentials('ggsister', 'ggsister')
+        parameters = pika.ConnectionParameters('localhost',
+                                               5672,
+                                               '/',
+                                               credentials)
 
+        self.connection = pika.BlockingConnection(parameters)
         self.channel = self.connection.channel()
 
         result = self.channel.queue_declare(exclusive=True)
