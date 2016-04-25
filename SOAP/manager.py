@@ -33,18 +33,20 @@ def parsing(worker, file):
     eventLogs.append(worker.parse(jsonify))
 
 i = 0
-for file in glob.glob("*.*"):
+for file in glob.glob("*"):
 	t = threading.Thread(target=parsing,args=(proxy[i%workers],file,))
 	t.start()
 	threads.append(t)
 	i=i+1
 
-	if (i%workers == workers-1):
+	if (i%workers == workers):
 		for thread in threads:
 			thread.join()
 
 		del threads[:]
 
+for thread in threads:
+	thread.join()
 
 for event in eventLogs:
     for key, value in event:

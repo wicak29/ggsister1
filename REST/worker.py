@@ -16,13 +16,11 @@ def parse():
 
     log = urlparse.parse_qs(request.json)
     txt = log['log'][0]
-    # return jsonify({'res': 'res'})
     res = parseText(txt)
 
     print res
 
-    return jsonify({'res': res})
-    # return jsonify({'task': task}), 201
+    return json.dumps(res)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=5000)

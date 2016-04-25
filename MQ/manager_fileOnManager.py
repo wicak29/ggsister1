@@ -72,5 +72,3 @@ for key, value in topTen:
     flag+=1
     if (flag > 10):
         break;
-
-
