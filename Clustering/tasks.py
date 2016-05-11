@@ -5,11 +5,7 @@ import os
 import glob
 import json
 
-app = Celery('tasks', backend='rpc://', broker='amqp://guest@localhost//')
-
-os.chdir("log/")
-eventLogs = []
-events = {}
+app = Celery('tasks', backend='amqp://ggsister:ggsister@10.151.43.230//', broker='amqp://ggsister:ggsister@10.151.43.230//')
 
 @app.task
 def add(x, y):
